@@ -1,0 +1,17 @@
+{
+    "manifest_version": 2,
+    "version": "0.2",
+    "name": "Uni Selector",
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "Rabbit.js",
+                "zawgyi_detector.js",
+                "content.js"
+            ]
+        }
+    ]
+}
