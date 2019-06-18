@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="lib/app.js"></script>
+
+    <style>
+        .error {
+            border-color: rgba(244, 0, 0, 0.5)
+        }
+    </style>
+
+</head>
+<body>
+
+    <form action="" id="form">
+            <input type="text" id="day" placeholder="Enter day" /> 
+
+            <select class="month" name="" id="month" >
+            </select>
+
+            <input type="text" id="year" placeholder="Enter year" />
+
+            <div id="error"></div>
+
+            <input type="hidden" id="hiddenDate">
+
+            <button type="submit" id="submit"> Submit </button>
+    </form>
+
+    <script>
+        $(document).ready( function () {
+
+                var dateOne = new DateGroupForm(['#day','#month','#year','#error'], {
+                    defaultDay: "1",
+                    defaultMonth: "02",
+                    defaultYear: "2010"
+                });
+                console.log('dateOne',dateOne)
+
+
+                var submit = document.getElementById("form")
+                submit.onsubmit = function (e) 
+                {
+                    e.preventDefault()
+
+                    if(!dateOne.isValid()) {
+                        dateOne.showError()
+                    } else {
+                        dateOne.clearError()
+                        alert('Success')
+                    }
+                }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <style>
+        .set_box {
+            background-color: #dfdfdf;
+            border-radius: 3px;
+        }
+        .set_box.error {
+            border: 1px solid #ff0000;
+        }
+
+        input[type="number"] {
+        -webkit-appearance: textfield;
+            -moz-appearance: textfield;
+                appearance: textfield;
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none;
+        }
+    </style>
+
+</head>
+<body>
+
+    <form action="" id="checkForm">
+            <label for=""> Day </label>
+            <input type="text" id="dayValidator" maxlength="2"> 
+            <br>
+            <label for=""> Year </label>
+            <input type="text" id="yearValidator" maxlength="4">
+            <br>
+            <select name="" id="monthValidator">
+                    <option > Select Month </option>
+            </select>
+            <br>
+
+        <button type="submit"> Submit </button>
+    </form>
+
+    <br>
+
+    <!-- Set Div -->
+    <div>
+            <span class="set_box" id="set_day"></span>
+            <span class="set_box" id="set_month"></span>
+            <span class="set_box" id="set_year"></span>
+    </div>
+    <!-- Set Div End-->
+
+    <p id="ErrorvalidDatePage">
+        
+    </p>
+
+    <p id="resultValidDate">
+
+    </p>
+
+ 
+
+    <!-- Hidden Field -->
+    <form action="">
+        <input id="hidden_input" type="hidden" value=""> 
+    </form>
+    <!-- Hidden Field End -->
+    
+    <script>
+        $(document).ready( function () {
+            console.log("Ready Jquery")
+
+            var maxYear = 2019;
+
+            var month_arr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul","Aug", "Sep", "Oct", "Nov", "Dec"];
+            
+            // Set Month
+            month_arr.forEach( function (value) {
+                $("#monthValidator").append(
+                    $("<option>", {value: value}).html(value)
+                )
+            });
+
+            var error_obj = {
+                day: true,
+                month: true,
+                year: true
+            };
+
+            // Validate Day
+            function validateDayInput() {
+                // console.log("Inside Day Validator");
+                var value = $("#dayValidator").val();
+                // console.log("DayValue=>", value);
+                // Day Is Not Number 
+                if(isNaN(value) || value == "") {
+                    console.log("Day Is Not Number");
+                    error_obj["day"] = false;
+                } else {
+                    console.log("Day Is A Number");
+                    value = +value;
+                    error_obj["day"] = value > 0 && value < 32 ? true : false;
+                }
+
+                return error_obj["day"];
+            }
+
+            // Validate Year
+            function validateYearInput() {
+                var value = $("#yearValidator").val();
+                // Day Is Not Number 
+                if(isNaN(value) || value == "") {
+                    error_obj["year"] = false
+                } else {
+                    value = +value;
+                    error_obj["year"] = value > 1919 && value <= maxYear ? true : false;
+                }
+                return error_obj["year"];
+            }
+
+            // Validate Month
+            function validateMonthInput() {
+                var value = $("#monthValidator").val();
+                // Day Is Not Number 
+                var isValidMonth = month_arr.some( function (month) {
+                    return month === value
+                })
+
+                if(!isValidMonth) {
+                    error_obj["month"] = false;
+                } else {
+                    error_obj["month"] = true;
+                }
+                return error_obj["month"];
+            }
+
+            // Event KeyPress Day
+            $("#dayValidator").on("keyup", function (e) {
+                setDay($(this).val());
+            })
+            
+            $("#yearValidator").on("keyup", function (e) {
+                setYear($(this).val());
+            })
+            // Month Validator
+            $("#monthValidator").on("change", function (e) {
+                setMonth($(this).val());
+            })
+
+            // check Validate
+            function checkValid() {
+                
+                // Invoke Day Input
+                validateDayInput();
+
+                // Invoke Year Input
+                validateYearInput();
+
+                // Invoke Month Input
+                validateMonthInput();
+
+                // if There is Error We Can Check 
+                if(error_obj.day == false) {
+                    // console.log("Day Invalid")
+                    // $("#set_day").addClass('error');
+                } 
+
+                if(error_obj.year == false) {
+                    // console.log("Year Invalid")
+                    // $("#set_year").addClass('error');
+                }
+
+                if(error_obj.month == false) {
+                    // console.log("Month Invalid")
+                    // $("#set_month").addClass('error');
+                }
+
+                if(error_obj.month && error_obj.day && error_obj.year) {
+                    // console.log("Valid");
+
+                    // Clean Error Valid Paragraph
+                    $("#ErrorvalidDatePage").html("");
+
+                    // Show & Set Result Paragraph
+                    var day = $("#dayValidator").val();
+                    var month = $("#monthValidator").val();
+                    var year = $("#yearValidator").val();
+                    var result = day + '/' + month + '/' +year;
+                    
+                    $('#hidden_input').val(result);
+
+                    $("#resultValidDate").html(result);
+
+                    alert("Success")
+                } else {
+                    var errorMessage = 'Invalid ';
+                    Object.keys(error_obj).map(function (key, index) {
+                        errorMessage += error_obj[key] === false ? key + ' ' : '';
+                    })
+                    $("#ErrorvalidDatePage").html(errorMessage);
+                }
+            }
+
+            // If Submmit Form
+            $('#checkForm').on('submit', function (e) {
+                e.preventDefault();
+
+                checkValid();
+
+                console.log("Error Object", error_obj);
+            });
+            
+            // Set Day Month YEar
+            var s = "&nbsp;"; // Space
+            function setDay(v) {
+                var value = v.trim() === '' ? '' : s+v+s ; 
+                // Invoke Month Input
+                if(validateDayInput()) {
+                    $("#set_day").removeClass('error');
+                } else {
+                    if(value !== '') {
+                        $("#set_day").addClass('error');
+                    }
+                }
+                $("#set_day").html(value);
+            }
+
+            function setMonth(v) {
+                var value = v.trim() === '' ? '' : s+v+s ; 
+
+                if(validateMonthInput()) {
+                    $("#set_month").removeClass('error');
+                } else {
+                    if(value !== '') {
+                        $("#set_month").addClass('error');
+                    }
+                }
+                $("#set_month").html(value);
+            }
+
+            function setYear(v) {
+                var value = v.trim() === '' ? '' : s+v+s ; 
+                // Invoke Year Input
+
+                if(validateYearInput()) {
+                    $("#set_year").removeClass('error');
+                } else {
+                    if(value !== '') {
+                        $("#set_year").addClass('error');
+                    }
+                }
+                $("#set_year").html(value);
+            }
+        })
+    </script>
+</body>
+</html>
